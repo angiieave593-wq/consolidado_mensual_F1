@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light only">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Consolidado mensual | Detecno Colombia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#234A9A; --cyan:#00C8FF;
+  --bg:#FFFFFF; --panel:#FFFFFF; --ink:#1C2E52; --ink2:#5A6A86; --line:#D9E1EE; --soft:#EAF0F8;
+  --acc:#234A9A; --acc-ink:#FFFFFF; --hi:#00B5EF; --warn:#A86A0C; --warn-bg:#FDF3E1; --err:#B23B2E; --err-bg:#FBE9E7; --ok-bg:#E3F6FD;
+  box-sizing:border-box; padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light only;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{background:#FFFFFF}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Open Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px 64px}
+.brandbar{background:#FFFFFF;border-bottom:1px solid #E3E8F0;padding-top:env(safe-area-inset-top,0px)}
+.brandbar .in{max-width:1040px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brandbar img{height:40px;width:auto;display:block}
+.brandbar .sello{font-family:Montserrat,"Open Sans",Arial,sans-serif;font-weight:600;font-size:13px;color:#234A9A}
+.hero{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--cyan)}
+.hero .in{max-width:1040px;margin:0 auto;padding:30px 20px 34px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+h1,h2,.svc .nom,.svc .v,.drop strong,details.aj>summary{font-family:Montserrat,"Open Sans",Arial,sans-serif}
+.drop{margin-top:28px}
+
+h1{font-size:30px;line-height:1.1;font-weight:800;letter-spacing:-.02em;margin:0}
+h1 small{display:block;font-family:"Open Sans",Arial,sans-serif;font-size:15px;font-weight:400;color:#CFE0F5;letter-spacing:0;margin-top:6px}
+.periodo{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:8px 10px}
+.periodo label{font-size:13px;color:#fff}
+.periodo select,.periodo input{background:#fff;color:#1C2E52;border-color:#fff}
+select,input[type=text],input[type=number]{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:6px 8px;min-width:0}
+input[type=number]{font-variant-numeric:tabular-nums}
+button{font:inherit;cursor:pointer;border-radius:24px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;font-weight:600}
+button.prim{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.link{border:none;background:none;color:var(--acc);padding:4px 6px;font-weight:600}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.drop{border:2px dashed var(--line);border-radius:14px;background:var(--panel);padding:30px 20px;text-align:center;transition:border-color .15s,background .15s}
+.drop.over{border-color:var(--cyan);background:var(--ok-bg)}
+.drop strong{display:block;font-size:18px;margin-bottom:4px}
+.drop p{margin:0 0 14px;color:var(--ink2)}
+.progress{margin-top:14px;font-size:14px;color:var(--ink2);min-height:21px}
+.bar{height:4px;background:var(--soft);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--cyan));transition:width .2s}
+h2{font-size:19px;margin:34px 0 10px;font-weight:700;color:var(--ink)}
+h2::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;background:var(--cyan);vertical-align:middle;margin-right:10px;transform:translateY(-2px)}
+.hint{color:var(--ink2);font-size:14px;margin:-4px 0 12px}
+/* Libro de servicios */
+.ledger{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.svc{display:grid;grid-template-columns:minmax(190px,1.4fr) minmax(130px,1fr) minmax(150px,1fr) minmax(110px,.8fr) auto;gap:14px;align-items:center;padding:18px 20px;border-top:1px solid var(--line)}
+.svc:first-child{border-top:none}
+.svc .nom{font-weight:700;font-size:16px}
+.svc .nom span{display:block;font-weight:400;font-size:13px;color:var(--ink2)}
+.svc .k{font-size:12px;color:var(--ink2)}
+.svc .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.svc .v.muted{color:var(--ink2);font-weight:500;font-size:16px}
+.svc .v.sm{font-size:17px}
+.svc .v.alerta{color:var(--err)}
+.muted-s{font-size:13px;color:var(--ink2);line-height:1.35}
+td.neg{color:var(--err);font-weight:600}
+.svc,.ledger-foot{background:#FFFFFF}
+.ledger,.files,details.aj,.drop{box-shadow:0 1px 3px rgba(35,74,154,.08)}
+.svc .cmp input{width:100%;margin-top:2px}
+.svc .dif{font-size:12px;font-variant-numeric:tabular-nums;margin-top:2px;color:var(--ink2)}
+.svc .dif.neg{color:var(--err)} .svc .dif.pos{color:var(--hi)}
+.svc.empty .v{color:var(--ink2)}
+.ledger-foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid var(--line)}
+@media (max-width:760px){.svc{grid-template-columns:1fr 1fr}.svc .nom{grid-column:1/-1}.svc .act{grid-column:1/-1}.svc .act button{width:100%}}
+/* Archivos */
+.files{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px 12px;border-top:1px solid var(--line);vertical-align:middle}
+th{font-weight:600;color:var(--ink2);font-size:13px;border-top:none;background:var(--soft)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+td.fn{max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--soft);color:var(--ink)}
+.tag.bad{background:var(--err-bg);color:var(--err)}
+.alert{border-radius:10px;padding:12px 14px;margin:12px 0;font-size:14px}
+.alert.warn{background:var(--warn-bg);color:var(--ink);border-left:4px solid var(--warn)}
+.alert.err{background:var(--err-bg);border-left:4px solid var(--err)}
+.alert.ok{background:var(--ok-bg);border-left:4px solid var(--hi)}
+/* Ajustes */
+details.aj{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-top:12px}
+details.seg .files{box-shadow:none}
+details.aj>summary{cursor:pointer;padding:14px 18px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.aj>summary::-webkit-details-marker{display:none}
+details.aj>summary::after{content:"+";font-weight:400;color:var(--ink2)}
+details.aj[open]>summary::after{content:"\2212"}
+details.aj .body{padding:0 18px 18px}
+details.aj summary span{font-weight:400;color:var(--ink2);font-size:14px;margin-left:auto}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--soft);border-radius:20px;padding:3px 4px 3px 10px;font-size:13px}
+.chip button{border:none;background:none;padding:0 6px;color:var(--ink2);font-weight:700}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.row input[type=text]{flex:1;min-width:200px}
+.manual td input{width:100%}
+.nuevo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line)}
+.toggle{display:flex;gap:10px;align-items:flex-start;margin-top:4px}
+.toggle input{margin-top:4px}
+footer{margin-top:40px;color:var(--ink2);font-size:13px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="brandbar"><div class="in"><img src="data:image/png;base64,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" alt="Detecno Colombia" width="98" height="40"></div></div>
+<div class="hero"><div class="in">
+    <h1>Consolidado mensual<small>Facturación electrónica, documento soporte, recepción y nómina</small></h1>
+    <div class="periodo">
+      <label for="mes">Periodo</label>
+      <select id="mes"></select>
+      <input id="anio" type="number" min="2020" max="2100" style="width:84px" aria-label="Año">
+    </div>
+</div></div>
+<div class="wrap">
+  <div class="drop" id="drop">
+    <strong>Arrastra aquí todos los Excel del mes</strong>
+    <p>Incluye los consolidados del mes anterior para comparar el consumo de cada cliente. Todo se procesa en este computador, nada se sube a ningún lado.</p>
+    <button class="prim" id="pick">Elegir archivos</button>
+    <input type="file" id="file" multiple accept=".xlsx,.xls" hidden>
+    <div class="progress" id="prog"></div>
+    <div class="bar" id="bar" hidden><i></i></div>
+  </div>
+
+  <h2>Servicios</h2>
+  <p class="hint">Los totales se actualizan al cargar archivos. Los nombres y NIT se respetan tal como vienen del aplicativo.</p>
+  <div class="ledger" id="ledger"></div>
+  <div id="avisos"></div>
+
+  <h2>Clientes para seguimiento</h2>
+  <p class="hint">Clientes cuyo consumo bajó frente al consolidado del mes anterior. El criterio se ajusta abajo, en Ajustes.</p>
+  <div id="seguimiento"></div>
+
+  <h2>Novedades frente al mes anterior</h2>
+  <p class="hint">Cambios en los clientes que conviene revisar, aunque no afecten el total.</p>
+  <div id="novedades"></div>
+
+  <h2>Archivos cargados</h2>
+  <div class="files" id="files"></div>
+
+  <h2>Ajustes</h2>
+  <details class="aj" id="ajNom">
+    <summary>Nómina: clientes que pasan a Novasoft <span id="ajNomCount"></span></summary>
+    <div class="body">
+      <p class="hint" style="margin-top:0">Estos clientes de la columna EmpresaPadre3 se reemplazan por <b id="nomAlianzaTxt"></b>.</p>
+      <div class="chips" id="chipsNova"></div>
+      <div class="row"><input type="text" id="addNova" placeholder="Nombre exacto como aparece en EmpresaPadre3"><button id="btnAddNova">Agregar a Novasoft</button></div>
+      <p class="hint" style="margin-top:16px">Clientes directos conocidos (se dejan igual):</p>
+      <div class="chips" id="chipsDir"></div>
+      <div class="row"><input type="text" id="addDir" placeholder="Nombre exacto como aparece en EmpresaPadre3"><button id="btnAddDir">Agregar como directo</button></div>
+      <div class="row" style="margin-top:14px"><button class="link" id="resetListas">Restaurar listas originales</button></div>
+    </div>
+  </details>
+  <details class="aj">
+    <summary>Criterio de seguimiento <span id="ajSegTxt"></span></summary>
+    <div class="body">
+      <div class="row"><label for="umbral">Marcar clientes cuyo consumo baje</label><input type="number" id="umbral" min="1" max="100" style="width:80px"><span>% o más</span></div>
+      <div class="row"><label for="minimo">y que el mes anterior tuvieran al menos</label><input type="number" id="minimo" min="0" style="width:100px"><span>transacciones</span></div>
+      <p class="hint" style="margin-top:12px">También se marcan los clientes que tuvieron consumo el mes anterior y este mes no aparecen. El mínimo evita alertas por clientes muy pequeños.</p>
+    </div>
+  </details>
+
+  <footer>Cada Excel trae la hoja de resumen como tabla fija (la agrupación de la tabla dinámica, con total general), las hojas Seguimiento y Novedades cuando hay comparación con el mes anterior, y las hojas con los datos unidos.</footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* Lógica de consolidación Detecno Colombia. Sin dependencias del DOM. */
+(function (root) {
+  var MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+
+  var NOVASOFT_DEFAULT = [
+    'BAKER TILLY COLOMBIA LTDA','CONSULTORIA ORGANIZACIONAL S.A.S','D CONTADORES S.A.S','DEEL COLOMBIA SAS',
+    'EXIMIA CONSULTORIA Y GESTION ESTRATEGICA SAS','EY OUTSOURCING S.A.S.','FINANZAUTO S.A. BIC',
+    'KPMG ADVISORY TAX & LEGAL S A S','LE ASESORAMOS OUTSOURCING SAS','MANPOWER PROFESSIONAL LTDA',
+    'PREMIUM BPO S.A.S.','SIGLO COLOMBIA S. A. S.','SOLUCIONES EMPRESARIALES HORIZONTE S.A.S.','UHY CONSULTORES S.A.S'
+  ];
+  var DIRECTOS_DEFAULT = [
+    'Factura1 S.A.S','NOVASOFT S A S','ADP ANDINA S.A.S','GRUPO BOLIVAR S.A.','SOFTYS COLOMBIA S.A.',
+    'DELOITTE & TOUCHE S.A.S','COMPUCONTA SOFTWARE ASESORES SAS','BEST SERVICE INTERNATIONAL Y CIA S.A.S'
+  ];
+  var NOVASOFT_NOMBRE = 'NOVASOFT S A S';
+  // idpadre cuyo reporte llega sin nombre_proveedor
+  var PROVEEDORES_IDPADRE = { '84': 'HOLCIM COLOMBIA S.A' };
+
+  // Tipos de archivo: prefijo de nombre + encabezados esperados
+  var TIPOS = [
+    { id: 'FE',     servicio: 'FE',  prefijo: 'facturacion_mensual',      cols: ['Nombre_Proveedor','Nitemisor','Nombreemisor','Año','Mes','Total'] },
+    { id: 'DS',     servicio: 'DS',  prefijo: 'documentsoporte_mensual',  cols: ['Nombre_Proveedor','Nitemisor','Nombreemisor','Año','Mes','Total'] },
+    { id: 'REC_G',  servicio: 'REC', prefijo: 'detallado_recepcion_general', cols: ['identificador','nitreceptor','nombre','fechaenvio','idpadre','nombre_proveedor','cufe'] },
+    { id: 'REC_AT', servicio: 'REC', prefijo: 'detallado_mensual_a_t',    cols: ['IdPadre','nombre_proveedor','id','nombre','nit','created_at','Cufe'] },
+    { id: 'REC_P',  servicio: 'REC', prefijo: 'detallado_mensual_prospectiva', cols: ['IdPadre','nombre_proveedor','id','nombre','nit','created_at','tipo','Cufe','rn'] },
+    { id: 'NOM',    servicio: 'NOM', prefijo: 'nomina_detallado',         cols: ['nitemisor','NombreEmpresa','Prefijo','Consecutivo','numero','CodigoTrabajador','cune','fechacrea','EmpresaPadre1','EmpresaPadre2','EmpresaPadre3'] }
+  ];
+
+  function norm(s) { return s == null ? '' : String(s).trim().replace(/\s+/g, ' ').toUpperCase(); }
+  function txt(v) { return v == null ? '' : (v instanceof Date ? v.toISOString() : String(v)); }
+
+  function clasificarPorNombre(nombre) {
+    var n = nombre.toLowerCase();
+    if (n.indexOf('consolidado') >= 0) return null;
+    for (var i = 0; i < TIPOS.length; i++) if (n.indexOf(TIPOS[i].prefijo) === 0) return TIPOS[i];
+    return null;
+  }
+  function clasificarPorEncabezado(header) {
+    var h = header.map(function (x) { return norm(x); }).join('|');
+    for (var i = TIPOS.length - 1; i >= 0; i--) {
+      var esperado = TIPOS[i].cols.map(norm).join('|');
+      if (h.indexOf(esperado) === 0) {
+        // FE y DS comparten encabezado: no se puede distinguir por columnas
+        if (TIPOS[i].id === 'FE' || TIPOS[i].id === 'DS') return 'FE_O_DS';
+        return TIPOS[i];
+      }
+    }
+    return null;
+  }
+
+  // Lee un libro y devuelve {header, rows} de la hoja de datos
+  function leerLibro(XLSX, data) {
+    var wb = XLSX.read(data, { type: 'array', dense: true, cellDates: true, cellStyles: false, cellHTML: false });
+    var nombreHoja = wb.SheetNames.indexOf('Resultado de la consulta') >= 0 ? 'Resultado de la consulta' : wb.SheetNames[0];
+    var aoa = XLSX.utils.sheet_to_json(wb.Sheets[nombreHoja], { header: 1, raw: true, defval: null, blankrows: false });
+    var header = (aoa[0] || []).map(function (x) { return x == null ? '' : String(x); });
+    var rows = aoa.slice(1);
+    return { header: header, rows: rows };
+  }
+
+  function idx(header, col) {
+    var n = norm(col);
+    for (var i = 0; i < header.length; i++) if (norm(header[i]) === n) return i;
+    return -1;
+  }
+
+  function agrupar(rows, keyIdx, valFn, opts) {
+    var mapa = new Map();
+    var limpiar = false;
+    rows.forEach(function (r) {
+      var key = keyIdx.map(function (k) {
+        var v = r[k];
+        v = v == null ? '' : String(v);
+        return limpiar ? v.trim().replace(/\s+/g, ' ') : v;
+      });
+      var s = key.join('\u0001');
+      var cur = mapa.get(s);
+      if (!cur) { cur = { key: key, val: 0 }; mapa.set(s, cur); }
+      cur.val += valFn(r);
+    });
+    var out = Array.from(mapa.values());
+    var col = new Intl.Collator('es', { sensitivity: 'base', numeric: false });
+    out.sort(function (a, b) {
+      for (var i = 0; i < a.key.length; i++) {
+        var c = col.compare(a.key[i], b.key[i]);
+        if (c) return c;
+      }
+      return 0;
+    });
+    return out;
+  }
+
+  function num(v) { if (typeof v === 'number') return v; var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+  function noVacio(v) { return v != null && String(v) !== ''; }
+
+  function detectarMes(archivos) {
+    var conteo = {};
+    archivos.forEach(function (a) {
+      var h = a.header, rs = a.rows;
+      var iA = idx(h, 'Año'), iM = idx(h, 'Mes');
+      var iF = ['fechaenvio', 'created_at', 'fechacrea'].map(function (c) { return idx(h, c); }).filter(function (i) { return i >= 0; })[0];
+      var lim = Math.min(rs.length, 200);
+      for (var j = 0; j < lim; j++) {
+        var r = rs[j], k = null;
+        if (iA >= 0 && iM >= 0 && r[iA] != null) k = Math.round(num(r[iA])) + '-' + Math.round(num(r[iM]));
+        else if (iF != null && r[iF] instanceof Date) k = r[iF].getFullYear() + '-' + (r[iF].getMonth() + 1);
+        if (k) conteo[k] = (conteo[k] || 0) + 1;
+      }
+    });
+    var best = null, bc = 0;
+    Object.keys(conteo).forEach(function (k) { if (conteo[k] > bc) { bc = conteo[k]; best = k; } });
+    if (!best) return null;
+    var p = best.split('-');
+    return { anio: +p[0], mes: +p[1] };
+  }
+
+  /* ---------- Servicios ---------- */
+
+  function procesarSimple(archivos, opts) {
+    // FE y DS: apilar y sumar Total por proveedor, NIT, nombre
+    var header = TIPOS[0].cols.slice();
+    var datos = [];
+    archivos.forEach(function (a) {
+      var map = header.map(function (c) { return idx(a.header, c); });
+      a.rows.forEach(function (r) { datos.push(map.map(function (i) { return i >= 0 ? r[i] : null; })); });
+    });
+    var grupos = agrupar(datos, [0, 1, 2], function (r) { return num(r[5]); }, opts);
+    var total = grupos.reduce(function (s, g) { return s + g.val; }, 0);
+    return { header: header, datos: datos, grupos: grupos, total: total, valorLabel: 'Suma de Total' };
+  }
+
+  function procesarRecepcion(porTipo, opts) {
+    var fuentes = [];
+    var general = { header: TIPOS[2].cols.slice(), datos: [] };
+    (porTipo.REC_G || []).forEach(function (a) {
+      var map = general.header.map(function (c) { return idx(a.header, c); });
+      a.rows.forEach(function (r) { general.datos.push(map.map(function (i) { return i >= 0 ? r[i] : null; })); });
+    });
+    // Proveedor en blanco: se completa (solo para agrupar) con el nombre conocido de su idpadre
+    var nombresPadre = Object.assign({}, opts.proveedoresPorIdPadre || PROVEEDORES_IDPADRE);
+    general.datos.forEach(function (r) { if (noVacio(r[5]) && noVacio(r[4]) && !nombresPadre[String(r[4])]) nombresPadre[String(r[4])] = String(r[5]); });
+    var completados = {};
+    var paraAgrupar = general.datos.map(function (r) {
+      if (noVacio(r[5])) return r;
+      var n = nombresPadre[String(r[4])]; if (!n) return r;
+      completados[n] = (completados[n] || 0) + 1;
+      var c = r.slice(); c[5] = n; return c;
+    });
+    // Reportes que llegan sin proveedor (Holcim, idpadre 84) se presentan como fuente aparte
+    var datosGen = [], aggGen = [], aparte = {};
+    general.datos.forEach(function (r, i) {
+      var n = !noVacio(r[5]) ? nombresPadre[String(r[4])] : null;
+      if (n) { (aparte[n] = aparte[n] || { datos: [], agg: [] }); aparte[n].datos.push(r); aparte[n].agg.push(paraAgrupar[i]); }
+      else { datosGen.push(r); aggGen.push(paraAgrupar[i]); }
+    });
+    var cuenta = function (r) { return noVacio(r[6]) ? 1 : 0; };
+    fuentes.push({ id: 'GENERAL', header: general.header, datos: datosGen, grupos: agrupar(aggGen, [5, 1, 2], cuenta, opts) });
+    Object.keys(aparte).forEach(function (n) {
+      fuentes.push({ id: n.split(' ')[0].toUpperCase(), nombre: n, header: general.header, datos: aparte[n].datos, grupos: agrupar(aparte[n].agg, [5, 1, 2], cuenta, opts) });
+    });
+
+    [['REC_AT', 'A&T', TIPOS[3]], ['REC_P', 'PROSPECTIVA', TIPOS[4]]].forEach(function (d) {
+      var t = d[2], header = t.cols.slice(), datos = [];
+      (porTipo[d[0]] || []).forEach(function (a) {
+        var map = header.map(function (c) { return idx(a.header, c); });
+        a.rows.forEach(function (r) { datos.push(map.map(function (i) { return i >= 0 ? r[i] : null; })); });
+      });
+      var iProv = header.indexOf('nombre_proveedor'), iNit = header.indexOf('nit'), iNom = header.indexOf('nombre'), iCufe = header.indexOf('Cufe');
+      var g = agrupar(datos, [iProv, iNit, iNom], function (r) { return noVacio(r[iCufe]) ? 1 : 0; }, opts);
+      fuentes.push({ id: d[1], header: header, datos: datos, grupos: g });
+    });
+
+    var todos = [];
+    fuentes.forEach(function (f) { f.grupos.forEach(function (g) { todos.push({ key: g.key, val: g.val, fuente: f.id }); }); });
+    var total = todos.reduce(function (s, g) { return s + g.val; }, 0);
+    var res = agrupar(todos.map(function (g) { return g.key.concat([g.val]); }), [0, 1, 2], function (r) { return r[3]; }, opts);
+
+    // Documentos (cufe) que aparecen más de una vez en el reporte general
+    var vistos = new Map(), repetidos = new Map();
+    general.datos.forEach(function (r) {
+      var cu = r[6]; if (!noVacio(cu)) return;
+      var prev = vistos.get(cu);
+      if (prev) {
+        var k = String(r[1] == null ? '' : r[1]) + '\u0001' + String(r[2] == null ? '' : r[2]);
+        var it = repetidos.get(k) || { nit: r[1], nombre: r[2], proveedores: new Set(), docs: 0 };
+        it.proveedores.add(String(prev[5])); it.proveedores.add(String(r[5])); it.docs++; repetidos.set(k, it);
+      } else vistos.set(cu, r);
+    });
+    return { fuentes: fuentes, todos: todos, grupos: res, total: total, completados: completados, repetidos: Array.from(repetidos.values()).map(function (x) { return { nit: x.nit, nombre: x.nombre, proveedores: Array.from(x.proveedores), docs: x.docs }; }) };
+  }
+
+  function procesarNomina(archivos, opts) {
+    var header = TIPOS[5].cols.slice();
+    var datos = [];
+    archivos.forEach(function (a) {
+      var map = header.map(function (c) { return idx(a.header, c); });
+      a.rows.forEach(function (r) { datos.push(map.map(function (i) { return i >= 0 ? r[i] : null; })); });
+    });
+    var iK = 10;
+    var alianza = new Set((opts.novasoft || NOVASOFT_DEFAULT).map(norm));
+    var directos = new Set((opts.directos || DIRECTOS_DEFAULT).map(norm));
+    var renombrados = {}, nuevos = {};
+    datos.forEach(function (r) {
+      var v = r[iK], n = norm(v);
+      if (alianza.has(n)) { renombrados[v] = (renombrados[v] || 0) + 1; r[iK] = opts.nombreAlianza || NOVASOFT_NOMBRE; }
+      else if (n && !directos.has(n)) { nuevos[v] = (nuevos[v] || 0) + 1; }
+    });
+    var grupos = agrupar(datos, [10, 8, 0, 1], function (r) { return noVacio(r[6]) ? 1 : 0; }, opts);
+    var total = grupos.reduce(function (s, g) { return s + g.val; }, 0);
+    return { header: header, datos: datos, grupos: grupos, total: total, renombrados: renombrados, nuevos: nuevos };
+  }
+
+  /* ---------- Mes anterior ---------- */
+  var SERV_INFO = {
+    FE:  { nKeys: 3, comp: [0, 1], nit: 1, nom: 2, grupo: 'proveedor', patron: /FACTURACI/i },
+    DS:  { nKeys: 3, comp: [0, 1], nit: 1, nom: 2, grupo: 'proveedor', patron: /DOCUMENTO\s*SOPORTE/i },
+    REC: { nKeys: 3, comp: [0, 1], nit: 1, nom: 2, grupo: 'proveedor', patron: /RECEPCI/i },
+    NOM: { nKeys: 4, comp: [0, 1, 2], nit: 2, nom: 3, grupo: 'EmpresaPadre', patron: /N[OÓ]MINA/i }
+  };
+  function servicioDeConsolidado(nombre) {
+    if (!/consolidado/i.test(nombre)) return null;
+    for (var s in SERV_INFO) if (SERV_INFO[s].patron.test(nombre)) return s;
+    return null;
+  }
+  function mesDeNombre(nombre) {
+    var u = nombre.toUpperCase();
+    for (var i = 0; i < MESES.length; i++) if (u.indexOf(MESES[i]) >= 0) return i + 1;
+    return null;
+  }
+  function claveNit(v) {
+    if (v == null) return '';
+    if (typeof v === 'number') return String(Math.round(v));
+    var s = String(v).trim();
+    return /^\d+(\.0+)?$/.test(s) ? String(parseInt(s, 10)) : s.replace(/\s+/g, ' ').toUpperCase();
+  }
+  function claveComp(servicio, key) {
+    var c = SERV_INFO[servicio].comp;
+    return c.map(function (i) { return claveNit(key[i]); }).join('|');
+  }
+  // Lee el resumen de un consolidado (hecho a mano con tabla dinámica, o generado por esta herramienta)
+  function leerAnterior(XLSX, data, servicio) {
+    var nK = SERV_INFO[servicio].nKeys;
+    var wb = XLSX.read(data, { type: 'array', dense: true, cellDates: true, cellStyles: false });
+    for (var si = 0; si < wb.SheetNames.length; si++) {
+      var aoa = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[si]], { header: 1, raw: true, defval: null, blankrows: false });
+      if (!aoa.length) continue;
+      var h = aoa[0] || [], col = -1;
+      for (var j = nK; j < h.length; j++) if (h[j] != null && /^(suma|cuenta) de /i.test(String(h[j]).trim())) { col = j; break; }
+      if (col < 0) continue;
+      var mapa = new Map(), total = 0, filas = 0;
+      for (var r = 1; r < aoa.length; r++) {
+        var row = aoa[r]; if (!row) continue;
+        var first = row[col - nK];
+        if (first != null && /^total general/i.test(String(first).trim())) break;
+        var v = row[col]; if (typeof v !== 'number') { v = parseFloat(v); if (isNaN(v)) continue; }
+        var key = []; for (var k = col - nK; k < col; k++) key.push(row[k] == null ? '' : (typeof row[k] === 'number' ? String(Math.round(row[k])) : row[k]));
+        if (key.some(function (x) { return / total$/i.test(String(x)); })) continue;
+        var ck = claveComp(servicio, key);
+        var it = mapa.get(ck); if (!it) { it = { key: key, val: 0 }; mapa.set(ck, it); }
+        it.val += v; total += v; filas++;
+      }
+      return { mapa: mapa, total: total, filas: filas, hoja: wb.SheetNames[si] };
+    }
+    return null;
+  }
+  function comparar(servicio, grupos, anterior, opts) {
+    var umbral = (opts && opts.umbral != null ? opts.umbral : 30) / 100;
+    var minimo = opts && opts.minimo != null ? opts.minimo : 10;
+    var usados = new Set(), seguimiento = [], nuevos = 0;
+    grupos.forEach(function (g) {
+      var ck = claveComp(servicio, g.key), a = anterior.mapa.get(ck);
+      g.ant = a ? a.val : 0; if (a) usados.add(ck); else nuevos++;
+      g.dif = g.val - g.ant; g.pct = g.ant ? g.dif / g.ant : null;
+    });
+    // Agrega por cliente para decidir seguimiento (un cliente puede tener varias líneas)
+    var porCliente = new Map();
+    grupos.forEach(function (g) {
+      var ck = claveComp(servicio, g.key), it = porCliente.get(ck);
+      if (!it) { it = { key: g.key, val: 0, ant: 0 }; porCliente.set(ck, it); }
+      it.val += g.val;
+    });
+    porCliente.forEach(function (it, ck) { var a = anterior.mapa.get(ck); it.ant = a ? a.val : 0; });
+    anterior.mapa.forEach(function (a, ck) { if (!porCliente.has(ck)) porCliente.set(ck, { key: a.key, val: 0, ant: a.val }); });
+    var dejaron = 0;
+    porCliente.forEach(function (it) {
+      if (it.ant >= minimo && it.ant > 0) {
+        var p = (it.val - it.ant) / it.ant;
+        if (it.val === 0) { dejaron++; seguimiento.push({ key: it.key, val: 0, ant: it.ant, dif: -it.ant, pct: -1, motivo: 'Sin consumo este mes' }); }
+        else if (p <= -umbral) seguimiento.push({ key: it.key, val: it.val, ant: it.ant, dif: it.val - it.ant, pct: p, motivo: 'Bajó ' + Math.round(-p * 100) + '%' });
+      }
+    });
+    seguimiento.sort(function (a, b) { return a.dif - b.dif; });
+    return { total: anterior.total, seguimiento: seguimiento, nuevos: nuevos, dejaron: dejaron, novedades: novedades(servicio, porCliente, anterior) };
+  }
+
+  // Novedades: cambios de nombre con el mismo NIT, cambios de proveedor/EmpresaPadre, clientes nuevos y clientes que ya no aparecen
+  function novedades(servicio, porCliente, anterior) {
+    var info = SERV_INFO[servicio], out = [];
+    var nomN = function (s) { return norm(s); };
+    var nuevos = [], idos = [];
+    porCliente.forEach(function (it, ck) {
+      var a = anterior.mapa.get(ck);
+      if (it.val > 0 && !a) nuevos.push({ ck: ck, it: it });
+      else if (it.val === 0 && a) idos.push({ ck: ck, it: { key: a.key, val: 0, ant: a.val } });
+      else if (a && it.val > 0 && nomN(it.key[info.nom]) !== nomN(a.key[info.nom]))
+        out.push({ tipo: 'Cambió de nombre', key: it.key, detalle: 'Antes: ' + a.key[info.nom], val: it.val, ant: a.val });
+    });
+    var nitDe = function (key) { return claveNit(key[info.nit]); };
+    var idosPorNit = {};
+    idos.forEach(function (x) { (idosPorNit[nitDe(x.it.key)] = idosPorNit[nitDe(x.it.key)] || []).push(x); });
+    var usados = new Set();
+    nuevos.forEach(function (x) {
+      var cand = (idosPorNit[nitDe(x.it.key)] || []).filter(function (y) { return !usados.has(y.ck); })[0];
+      if (cand) {
+        usados.add(cand.ck);
+        var antes = info.grupo === 'proveedor' ? cand.it.key[0] : cand.it.key.slice(0, 2).join(' / ');
+        out.push({ tipo: info.grupo === 'proveedor' ? 'Cambió de proveedor' : 'Cambió de EmpresaPadre', key: x.it.key, detalle: 'Antes: ' + antes, val: x.it.val, ant: cand.it.ant });
+      } else out.push({ tipo: 'Cliente nuevo', key: x.it.key, detalle: 'No estaba el mes anterior', val: x.it.val, ant: 0 });
+    });
+    idos.forEach(function (y) { if (!usados.has(y.ck)) out.push({ tipo: 'Ya no aparece', key: y.it.key, detalle: 'Estaba el mes anterior y este mes no', val: 0, ant: y.it.ant }); });
+    var orden = { 'Cambió de nombre': 0, 'Cambió de proveedor': 1, 'Cambió de EmpresaPadre': 1, 'Ya no aparece': 2, 'Cliente nuevo': 3 };
+    out.sort(function (a, b) { return (orden[a.tipo] - orden[b.tipo]) || (b.val + b.ant - a.val - a.ant); });
+    return out;
+  }
+
+  /* ---------- Salida Excel ---------- */
+
+  function hojaResumen(XLSX, headers, grupos, valorLabel, total, cmp) {
+    var conCmp = !!cmp;
+    var aoa = [headers.concat([valorLabel]).concat(conCmp ? ['Mes anterior', 'Variación', 'Variación %'] : [])];
+    grupos.forEach(function (g) {
+      var fila = g.key.map(function (k) { return k === '' ? '(en blanco)' : k; }).concat([g.val]);
+      if (conCmp) fila = fila.concat([g.ant, g.dif, g.pct]);
+      aoa.push(fila);
+    });
+    var vacias = headers.map(function () { return null; }).slice(1);
+    var ft = ['Total general'].concat(vacias).concat([total]);
+    if (conCmp) ft = ft.concat([cmp.total, total - cmp.total, cmp.total ? (total - cmp.total) / cmp.total : null]);
+    aoa.push(ft);
+    var ws = XLSX.utils.aoa_to_sheet(aoa, { cellDates: true });
+    var nc = headers.length;
+    ws['!cols'] = headers.map(function (h, i) { return { wch: i === 0 ? 34 : (/nit/i.test(h) ? 14 : 46) }; }).concat([{ wch: 16 }, { wch: 14 }, { wch: 12 }, { wch: 12 }]);
+    ws['!autofilter'] = { ref: 'A1:' + XLSX.utils.encode_cell({ r: aoa.length - 1, c: nc + (conCmp ? 3 : 0) }) };
+    if (conCmp) for (var r = 1; r < aoa.length; r++) { var cell = ws[XLSX.utils.encode_cell({ r: r, c: nc + 3 })]; if (cell) cell.z = '0.0%'; }
+    return ws;
+  }
+  function hojaSeguimiento(XLSX, headers, cmp, opts, medida) {
+    var aoa = [headers.concat([medida, 'Mes anterior', 'Variación', 'Variación %', 'Motivo'])];
+    cmp.seguimiento.forEach(function (s) { aoa.push(s.key.map(function (k) { return k === '' ? '(en blanco)' : k; }).concat([s.val, s.ant, s.dif, s.pct, s.motivo])); });
+    if (aoa.length === 1) aoa.push(['Ningún cliente bajó su consumo por encima del umbral.']);
+    aoa.push([]);
+    aoa.push(['Criterio: clientes con al menos ' + opts.minimo + ' el mes anterior cuyo consumo bajó ' + opts.umbral + '% o más, o que no tuvieron consumo este mes.']);
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    var nc = headers.length;
+    for (var r = 1; r < aoa.length; r++) { var cell = ws[XLSX.utils.encode_cell({ r: r, c: nc + 3 })]; if (cell && typeof cell.v === 'number') cell.z = '0.0%'; }
+    ws['!cols'] = headers.map(function (h, i) { return { wch: i === 0 ? 34 : (/nit/i.test(h) ? 14 : 46) }; }).concat([{ wch: 13 }, { wch: 13 }, { wch: 12 }, { wch: 12 }, { wch: 22 }]);
+    return ws;
+  }
+  function hojaNovedades(XLSX, headers, cmp, medida) {
+    var aoa = [['Novedad'].concat(headers).concat(['Detalle', medida, 'Mes anterior'])];
+    cmp.novedades.forEach(function (n) { aoa.push([n.tipo].concat(n.key.map(function (k) { return k === '' ? '(en blanco)' : k; })).concat([n.detalle, n.val, n.ant])); });
+    if (aoa.length === 1) aoa.push(['Sin novedades frente al mes anterior.']);
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = [{ wch: 24 }].concat(headers.map(function (h, i) { return { wch: i === 0 ? 30 : (/nit/i.test(h) ? 14 : 42) }; })).concat([{ wch: 44 }, { wch: 14 }, { wch: 14 }]);
+    ws['!autofilter'] = { ref: 'A1:' + XLSX.utils.encode_cell({ r: aoa.length - 1, c: headers.length + 3 }) };
+    return ws;
+  }
+  function hojaDatos(XLSX, header, datos) {
+    var ws = XLSX.utils.aoa_to_sheet([header].concat(datos), { cellDates: true, dateNF: 'yyyy-mm-dd hh:mm:ss' });
+    ws['!cols'] = header.map(function () { return { wch: 18 }; });
+    return ws;
+  }
+
+  function libroSimple(XLSX, r, cmp, opts) {
+    var wb = XLSX.utils.book_new(), hd = ['Nombre_Proveedor', 'Nitemisor', 'Nombreemisor'];
+    XLSX.utils.book_append_sheet(wb, hojaResumen(XLSX, hd, r.grupos, r.valorLabel, r.total, cmp), 'Resumen');
+    if (cmp) { XLSX.utils.book_append_sheet(wb, hojaSeguimiento(XLSX, hd, cmp, opts, r.valorLabel), 'Seguimiento'); XLSX.utils.book_append_sheet(wb, hojaNovedades(XLSX, hd, cmp, r.valorLabel), 'Novedades'); }
+    XLSX.utils.book_append_sheet(wb, hojaDatos(XLSX, r.header, r.datos), 'Datos');
+    return wb;
+  }
+  function libroRecepcion(XLSX, r, mesNombre, cmp, opts) {
+    var wb = XLSX.utils.book_new(), hd = ['nombre_proveedor', 'nitreceptor', 'nombre'];
+    XLSX.utils.book_append_sheet(wb, hojaResumen(XLSX, hd, r.grupos, 'Cuenta de cufe', r.total, cmp), mesNombre || 'MES');
+    if (cmp) { XLSX.utils.book_append_sheet(wb, hojaSeguimiento(XLSX, hd, cmp, opts, 'Cuenta de cufe'), 'Seguimiento'); XLSX.utils.book_append_sheet(wb, hojaNovedades(XLSX, hd, cmp, 'Cuenta de cufe'), 'Novedades'); }
+    var porFuente = r.todos.map(function (g) { return { key: [g.fuente].concat(g.key), val: g.val }; });
+    XLSX.utils.book_append_sheet(wb, hojaResumen(XLSX, ['Fuente', 'nombre_proveedor', 'nit', 'nombre'], porFuente, 'Cuenta de cufe', r.total, null), 'Por fuente');
+    r.fuentes.forEach(function (f) { XLSX.utils.book_append_sheet(wb, hojaDatos(XLSX, f.header, f.datos), f.id); });
+    return wb;
+  }
+  function libroNomina(XLSX, r, cmp, opts) {
+    var wb = XLSX.utils.book_new(), hd = ['EmpresaPadre3', 'EmpresaPadre1', 'nitemisor', 'NombreEmpresa'];
+    XLSX.utils.book_append_sheet(wb, hojaResumen(XLSX, hd, r.grupos, 'Cuenta de cune', r.total, cmp), 'Resumen');
+    if (cmp) { XLSX.utils.book_append_sheet(wb, hojaSeguimiento(XLSX, hd, cmp, opts, 'Cuenta de cune'), 'Seguimiento'); XLSX.utils.book_append_sheet(wb, hojaNovedades(XLSX, hd, cmp, 'Cuenta de cune'), 'Novedades'); }
+    XLSX.utils.book_append_sheet(wb, hojaDatos(XLSX, r.header, r.datos), 'Datos');
+    return wb;
+  }
+
+  root.F1Core = {
+    MESES: MESES, TIPOS: TIPOS, NOVASOFT_DEFAULT: NOVASOFT_DEFAULT, DIRECTOS_DEFAULT: DIRECTOS_DEFAULT, NOVASOFT_NOMBRE: NOVASOFT_NOMBRE,
+    clasificarPorNombre: clasificarPorNombre, clasificarPorEncabezado: clasificarPorEncabezado, leerLibro: leerLibro, detectarMes: detectarMes,
+    procesarSimple: procesarSimple, procesarRecepcion: procesarRecepcion, procesarNomina: procesarNomina,
+    libroSimple: libroSimple, libroRecepcion: libroRecepcion, libroNomina: libroNomina, norm: norm,
+    servicioDeConsolidado: servicioDeConsolidado, mesDeNombre: mesDeNombre, leerAnterior: leerAnterior, comparar: comparar
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function(){
+var C = window.F1Core;
+var SERV = [
+  {id:'FE', nombre:'Facturación electrónica', archivo:'CONSOLIDADO FACTURACION', medida:'Suma de Total', hd:['Nombre_Proveedor','Nitemisor','Nombreemisor']},
+  {id:'DS', nombre:'Documento soporte', archivo:'CONSOLIDADO DOCUMENTO SOPORTE', medida:'Suma de Total', hd:['Nombre_Proveedor','Nitemisor','Nombreemisor']},
+  {id:'REC', nombre:'Recepción', archivo:'CONSOLIDADO RECEPCION', medida:'Cuenta de cufe', hd:['nombre_proveedor','nitreceptor','nombre']},
+  {id:'NOM', nombre:'Nómina', archivo:'CONSOLIDADO NOMINA', medida:'Cuenta de cune', hd:['EmpresaPadre3','EmpresaPadre1','nitemisor','NombreEmpresa']}
+];
+var TIPO_LABEL = {FE:'Facturación', DS:'Documento soporte', REC_G:'Recepción general', REC_AT:'Recepción A&T', REC_P:'Recepción Prospectiva', NOM:'Nómina',
+  ANT_FE:'Mes anterior: facturación', ANT_DS:'Mes anterior: doc. soporte', ANT_REC:'Mes anterior: recepción', ANT_NOM:'Mes anterior: nómina'};
+
+var archivos = [];   // {key,name,size,tipo,header,rows,error,ant}
+var resultados = {}, comparaciones = {};
+var cfg = cargarCfg();
+var dl = null;
+if (window.claude && typeof window.claude.use === 'function') {
+  window.claude.use('downloads').then(function(x){ dl = x; }).catch(function(){ dl = null; });
+}
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fmt(n){ return (n || 0).toLocaleString('es-CO', {maximumFractionDigits: 2}); }
+function pct(p){ return p == null ? 'nuevo' : (p > 0 ? '+' : '') + (p * 100).toLocaleString('es-CO', {maximumFractionDigits: 1}) + '%'; }
+function tick(){ return new Promise(function(r){ setTimeout(r, 20); }); }
+
+function cargarCfg(){
+  var base = {novasoft:C.NOVASOFT_DEFAULT.slice(), directos:C.DIRECTOS_DEFAULT.slice(), umbral:30, minimo:10};
+  try { var s = localStorage.getItem('f1-consolidado-cfg'); if (s) { var o = JSON.parse(s); ['novasoft','directos','umbral','minimo'].forEach(function(k){ if (o[k] != null) base[k] = o[k]; }); } } catch(e){}
+  return base;
+}
+function guardarCfg(){ try { localStorage.setItem('f1-consolidado-cfg', JSON.stringify({novasoft:cfg.novasoft, directos:cfg.directos, umbral:cfg.umbral, minimo:cfg.minimo})); } catch(e){} }
+
+/* ---------- Periodo ---------- */
+C.MESES.forEach(function(m, i){ var o = document.createElement('option'); o.value = i + 1; o.textContent = m.charAt(0) + m.slice(1).toLowerCase(); $('mes').appendChild(o); });
+(function(){ var d = new Date(); d.setMonth(d.getMonth() - 1); $('mes').value = d.getMonth() + 1; $('anio').value = d.getFullYear(); })();
+var periodoManual = false;
+$('mes').addEventListener('change', function(){ periodoManual = true; render(); });
+$('anio').addEventListener('change', function(){ periodoManual = true; render(); });
+function periodoTxt(){ return C.MESES[+$('mes').value - 1] + ' ' + $('anio').value; }
+
+/* ---------- Carga ---------- */
+var drop = $('drop');
+$('pick').addEventListener('click', function(){ $('file').click(); });
+$('file').addEventListener('change', function(e){ cargar(Array.from(e.target.files)); e.target.value = ''; });
+['dragenter','dragover'].forEach(function(t){ drop.addEventListener(t, function(e){ e.preventDefault(); drop.classList.add('over'); }); });
+['dragleave','drop'].forEach(function(t){ drop.addEventListener(t, function(e){ e.preventDefault(); drop.classList.remove('over'); }); });
+drop.addEventListener('drop', function(e){ cargar(Array.from(e.dataTransfer.files)); });
+
+var cola = Promise.resolve();
+function cargar(lista){
+  lista = lista.filter(function(f){ return /\.xlsx?$/i.test(f.name); });
+  if (!lista.length) { $('prog').textContent = 'No se encontraron archivos de Excel en lo que soltaste.'; return; }
+  cola = cola.then(function(){ return cargarLote(lista); });
+}
+function leerAnteriorDe(reg, servicio){
+  var a = C.leerAnterior(XLSX, reg.bytes, servicio);
+  reg.ant = a; reg.rows = []; reg.header = [];
+  if (!a) reg.error = 'No se encontró la tabla de resumen (Suma de / Cuenta de) en este consolidado.';
+}
+async function cargarLote(lista){
+  var bar = $('bar'); bar.hidden = false;
+  var omitidos = 0;
+  for (var i = 0; i < lista.length; i++) {
+    var f = lista[i], key = f.name + '|' + f.size;
+    $('prog').textContent = 'Leyendo ' + (i + 1) + ' de ' + lista.length + ': ' + f.name + (f.size > 5e6 ? ' (archivo grande, puede tardar un poco)' : '');
+    bar.firstElementChild.style.width = Math.round(i / lista.length * 100) + '%';
+    if (archivos.some(function(a){ return a.key === key; })) { omitidos++; continue; }
+    await tick();
+    var reg = {key:key, name:f.name, size:f.size, tipo:null, header:[], rows:[], error:null, ant:null, bytes:null};
+    try {
+      var bytes = new Uint8Array(await f.arrayBuffer());
+      var sAnt = C.servicioDeConsolidado(f.name);
+      if (/consolidado/i.test(f.name)) {
+        if (!sAnt) reg.error = 'Es un consolidado pero no se reconoce el servicio. Elige cuál es.';
+        else { reg.tipo = 'ANT_' + sAnt; reg.bytes = bytes; leerAnteriorDe(reg, sAnt); }
+        reg.bytes = sAnt ? null : bytes;
+      } else {
+        var lib = C.leerLibro(XLSX, bytes);
+        reg.header = lib.header; reg.rows = lib.rows;
+        var t = C.clasificarPorNombre(f.name);
+        if (!t) { var h = C.clasificarPorEncabezado(lib.header); if (h && h !== 'FE_O_DS') t = h; else if (h === 'FE_O_DS') reg.error = 'Tiene columnas de facturación o documento soporte. Elige cuál es.'; else reg.error = 'No se reconoce el tipo de reporte. Elige el tipo o ignóralo.'; }
+        if (t) { validarColumnas(reg, t); reg.tipo = t.id; }
+      }
+    } catch (e) { reg.error = 'No se pudo leer el archivo: ' + (e && e.message || e); }
+    archivos.push(reg);
+    if (i % 3 === 2) recalcular();
+  }
+  bar.firstElementChild.style.width = '100%';
+  setTimeout(function(){ bar.hidden = true; }, 600);
+  $('prog').textContent = 'Listo: ' + archivos.filter(function(a){ return a.tipo && a.tipo.indexOf('ANT_') !== 0; }).length + ' reportes del mes y ' + archivos.filter(function(a){ return a.ant; }).length + ' consolidados del mes anterior.' + (omitidos ? ' ' + omitidos + ' ya estaban cargados y se omitieron.' : '');
+  if (!periodoManual) { var m = C.detectarMes(archivos.filter(function(a){ return a.tipo && a.rows.length; })); if (m) { $('mes').value = m.mes; $('anio').value = m.anio; } }
+  recalcular();
+}
+function validarColumnas(reg, t){
+  var esperado = t.cols.map(C.norm), tiene = reg.header.map(C.norm);
+  var faltan = esperado.filter(function(c){ return tiene.indexOf(c) < 0; });
+  reg.error = faltan.length ? 'Le faltan columnas: ' + faltan.join(', ') : null;
+}
+
+/* ---------- Cálculo ---------- */
+function porTipo(){ var o = {}; archivos.forEach(function(a){ if (a.tipo) (o[a.tipo] = o[a.tipo] || []).push(a); }); return o; }
+function anteriorDe(id){ var a = archivos.filter(function(x){ return x.tipo === 'ANT_' + id && x.ant; }); return a.length ? a[a.length - 1] : null; }
+function recalcular(){
+  var p = porTipo();
+  resultados = {}; comparaciones = {};
+  if (p.FE) resultados.FE = C.procesarSimple(p.FE, {});
+  if (p.DS) resultados.DS = C.procesarSimple(p.DS, {});
+  if (p.REC_G || p.REC_AT || p.REC_P) resultados.REC = C.procesarRecepcion(p, {});
+  if (p.NOM) resultados.NOM = C.procesarNomina(p.NOM, {novasoft: cfg.novasoft, directos: cfg.directos});
+  SERV.forEach(function(s){
+    var r = resultados[s.id], a = anteriorDe(s.id);
+    if (r && a) comparaciones[s.id] = C.comparar(s.id, r.grupos, a.ant, {umbral: cfg.umbral, minimo: cfg.minimo});
+  });
+  render();
+}
+
+/* ---------- Render ---------- */
+function render(){
+  var p = porTipo();
+  var h = '';
+  SERV.forEach(function(s){
+    var r = resultados[s.id], cmp = comparaciones[s.id], a = anteriorDe(s.id), filas = 0, det = '';
+    if (s.id === 'REC') {
+      det = (p.REC_G || []).length + ' general (incluye Holcim), ' + ((p.REC_AT || []).length ? 'A&T sí' : 'falta A&T') + ', ' + ((p.REC_P || []).length ? 'Prospectiva sí' : 'falta Prospectiva');
+      if (r) filas = r.fuentes.reduce(function(acc, f){ return acc + f.datos.length; }, 0);
+    } else {
+      var n = (p[s.id] || []).length; det = n + (n === 1 ? ' archivo' : ' archivos');
+      if (r) filas = r.datos.length;
+    }
+    var antHtml;
+    if (a) {
+      var dif = r ? r.total - a.ant.total : null;
+      antHtml = '<div class="v sm">' + fmt(a.ant.total) + '</div>' + (r ? '<div class="dif ' + (dif < 0 ? 'neg' : 'pos') + '">' + (dif > 0 ? '+' : '') + fmt(dif) + ' (' + pct(a.ant.total ? dif / a.ant.total : null) + ')</div>' : '');
+    } else antHtml = '<div class="muted-s">Suelta el consolidado anterior para comparar</div>';
+    var seg = cmp ? '<div class="v sm ' + (cmp.seguimiento.length ? 'alerta' : '') + '">' + cmp.seguimiento.length + '</div><div class="muted-s">' + (cmp.seguimiento.length === 1 ? 'cliente' : 'clientes') + '</div>' : '<div class="muted-s">Sin comparación</div>';
+    h += '<div class="svc' + (r ? '' : ' empty') + '">' +
+      '<div class="nom">' + esc(s.nombre) + '<span>' + esc(det) + ' · ' + fmt(filas) + ' registros</span></div>' +
+      '<div><div class="k">' + esc(s.medida) + '</div><div class="v">' + (r ? fmt(r.total) : 'Sin datos') + '</div></div>' +
+      '<div><div class="k">Mes anterior</div>' + antHtml + '</div>' +
+      '<div><div class="k">Para seguimiento</div>' + seg + '</div>' +
+      '<div class="act"><button class="prim" data-dl="' + s.id + '"' + (r ? '' : ' disabled') + '>Descargar Excel</button></div>' +
+      '</div>';
+  });
+  var cuantos = Object.keys(resultados).length;
+  h += '<div class="ledger-foot"><span>' + (cuantos ? 'Se descargarán como CONSOLIDADO [servicio] ' + esc(periodoTxt()) + '.xlsx' : 'Carga archivos para empezar.') + '</span>' +
+       '<button class="prim" id="dlAll"' + (cuantos ? '' : ' disabled') + '>Descargar los ' + (cuantos || '') + ' Excel</button></div>';
+  $('ledger').innerHTML = h.replace(/ · /g, ', ');
+
+  // Avisos
+  var av = '';
+  var nom = resultados.NOM;
+  if (nom) {
+    var nuevos = Object.keys(nom.nuevos);
+    var ren = Object.values(nom.renombrados).reduce(function(x, y){ return x + y; }, 0);
+    av += '<div class="alert ok">Nómina: ' + fmt(ren) + ' registros de ' + Object.keys(nom.renombrados).length + ' clientes pasaron a ' + esc(C.NOVASOFT_NOMBRE) + '.</div>';
+    if (nuevos.length) {
+      av += '<div class="alert warn"><b>Nómina: ' + nuevos.length + (nuevos.length === 1 ? ' cliente nuevo' : ' clientes nuevos') + ' en EmpresaPadre3.</b> No está en la lista de Novasoft ni en la de directos. Indica a cuál pertenece.';
+      nuevos.forEach(function(n){ av += '<div class="nuevo"><span>' + esc(n) + ' <span class="k">(' + fmt(nom.nuevos[n]) + ' registros)</span></span><span><button data-nova="' + esc(n) + '">Pasa a Novasoft</button> <button data-dir="' + esc(n) + '">Es directo</button></span></div>'; });
+      av += '</div>';
+    }
+  }
+  var rec = resultados.REC;
+  if (rec) {
+    var faltan = [];
+    if (!(p.REC_G || []).length) faltan.push('el reporte general'); if (!(p.REC_AT || []).length) faltan.push('A&T'); if (!(p.REC_P || []).length) faltan.push('Prospectiva');
+    if (faltan.length) av += '<div class="alert warn">Recepción: falta ' + esc(faltan.join(' y ')) + '. El total puede quedar incompleto.</div>';
+    Object.keys(rec.completados || {}).forEach(function(n){ av += '<div class="alert ok">Recepción: ' + fmt(rec.completados[n]) + ' registros del reporte de ' + esc(n) + ' (llega sin nombre de proveedor) se agrupan aparte, empresa por empresa.</div>'; });
+    if (rec.repetidos.length) {
+      var docs = rec.repetidos.reduce(function(x, y){ return x + y.docs; }, 0);
+      av += '<div class="alert warn"><b>Recepción: ' + fmt(docs) + ' documentos aparecen dos veces en el reporte general</b> (mismo cufe con distinto proveedor). Se están contando tal como vienen. Revisa si es el caso de Holcim:';
+      rec.repetidos.slice(0, 8).forEach(function(x){ av += '<div class="nuevo"><span>' + esc(x.nombre) + ' <span class="k">NIT ' + esc(x.nit) + '</span></span><span class="k">' + fmt(x.docs) + ' repetidos entre ' + esc(x.proveedores.join(' y ')) + '</span></div>'; });
+      av += '</div>';
+    }
+  }
+  SERV.forEach(function(s){
+    var a = anteriorDe(s.id);
+    if (a) { var m = C.mesDeNombre(a.name); if (m && m === +$('mes').value) av += '<div class="alert warn">' + esc(s.nombre) + ': el consolidado de comparación parece ser del mismo mes (' + esc(a.name) + '). Debería ser del mes anterior.</div>'; }
+  });
+  var errs = archivos.filter(function(x){ return x.error; });
+  if (errs.length) av += '<div class="alert err">' + errs.length + (errs.length === 1 ? ' archivo necesita' : ' archivos necesitan') + ' revisión. Míralos en la tabla de archivos.</div>';
+  $('avisos').innerHTML = av;
+
+  // Seguimiento
+  var sh = '';
+  SERV.forEach(function(s){
+    var cmp = comparaciones[s.id]; if (!cmp) return;
+    sh += '<details class="aj seg"><summary>' + esc(s.nombre) + ' <span>' + cmp.seguimiento.length + (cmp.seguimiento.length === 1 ? ' cliente' : ' clientes') + (cmp.dejaron ? ', ' + cmp.dejaron + ' sin consumo' : '') + '</span></summary><div class="body"><div class="files">';
+    if (!cmp.seguimiento.length) sh += '<table><tr><td style="padding:14px;color:var(--ink2)">Ningún cliente bajó su consumo por encima del umbral.</td></tr></table>';
+    else {
+      sh += '<table><thead><tr>' + s.hd.map(function(x){ return '<th>' + esc(x) + '</th>'; }).join('') + '<th style="text-align:right">' + esc(s.medida) + '</th><th style="text-align:right">Mes anterior</th><th style="text-align:right">Variación</th></tr></thead><tbody>';
+      cmp.seguimiento.slice(0, 50).forEach(function(x){
+        sh += '<tr>' + x.key.map(function(k){ return '<td>' + esc(k === '' ? '(en blanco)' : k) + '</td>'; }).join('') + '<td class="n">' + fmt(x.val) + '</td><td class="n">' + fmt(x.ant) + '</td><td class="n neg">' + pct(x.pct) + '</td></tr>';
+      });
+      sh += '</tbody></table>';
+      if (cmp.seguimiento.length > 50) sh += '<p class="hint" style="padding:8px 12px;margin:0">Se muestran los 50 con mayor caída. La lista completa está en la hoja Seguimiento del Excel.</p>';
+    }
+    sh += '</div></div></details>';
+  });
+  var nh = '';
+  SERV.forEach(function(s){
+    var cmp = comparaciones[s.id]; if (!cmp) return;
+    var cuenta = {}; cmp.novedades.forEach(function(n){ cuenta[n.tipo] = (cuenta[n.tipo] || 0) + 1; });
+    var resumen = Object.keys(cuenta).map(function(k){ return cuenta[k] + ' ' + k.toLowerCase(); }).join(', ') || 'sin novedades';
+    nh += '<details class="aj seg"><summary>' + esc(s.nombre) + ' <span>' + esc(resumen) + '</span></summary><div class="body"><div class="files">';
+    if (!cmp.novedades.length) nh += '<table><tr><td style="padding:14px;color:var(--ink2)">Sin novedades frente al mes anterior.</td></tr></table>';
+    else {
+      nh += '<table><thead><tr><th>Novedad</th>' + s.hd.map(function(x){ return '<th>' + esc(x) + '</th>'; }).join('') + '<th>Detalle</th><th style="text-align:right">' + esc(s.medida) + '</th><th style="text-align:right">Mes anterior</th></tr></thead><tbody>';
+      cmp.novedades.slice(0, 60).forEach(function(x){
+        nh += '<tr><td><span class="tag' + (x.tipo === 'Ya no aparece' ? ' bad' : '') + '">' + esc(x.tipo) + '</span></td>' + x.key.map(function(k){ return '<td>' + esc(k === '' ? '(en blanco)' : k) + '</td>'; }).join('') + '<td>' + esc(x.detalle) + '</td><td class="n">' + fmt(x.val) + '</td><td class="n">' + fmt(x.ant) + '</td></tr>';
+      });
+      nh += '</tbody></table>';
+      if (cmp.novedades.length > 60) nh += '<p class="hint" style="padding:8px 12px;margin:0">Se muestran 60 de ' + cmp.novedades.length + '. La lista completa está en la hoja Novedades del Excel.</p>';
+    }
+    nh += '</div></div></details>';
+  });
+  $('novedades').innerHTML = nh || '<div class="files"><table><tr><td style="color:var(--ink2);padding:16px">Aparecen al cargar los consolidados del mes anterior: clientes que cambiaron de nombre con el mismo NIT, que cambiaron de proveedor o EmpresaPadre, clientes nuevos y clientes que ya no aparecen.</td></tr></table></div>';
+  $('seguimiento').innerHTML = sh || '<div class="files"><table><tr><td style="color:var(--ink2);padding:16px">Suelta junto con los reportes del mes los consolidados del mes anterior (por ejemplo, CONSOLIDADO FACTURACION AGOSTO 2026.xlsx) para ver qué clientes bajaron su consumo.</td></tr></table></div>';
+
+  // Archivos
+  if (!archivos.length) { $('files').innerHTML = '<table><tr><td style="color:var(--ink2);padding:16px">Todavía no hay archivos.</td></tr></table>'; }
+  else {
+    var t = '<table><thead><tr><th>Archivo</th><th>Tipo</th><th style="text-align:right">Filas</th><th>Estado</th><th></th></tr></thead><tbody>';
+    archivos.forEach(function(a, i){
+      var esAnt = a.tipo && a.tipo.indexOf('ANT_') === 0;
+      var opciones = Object.keys(TIPO_LABEL).filter(function(k){ return (k.indexOf('ANT_') === 0) === (esAnt || /consolidado/i.test(a.name)); });
+      var sel = '<select data-tipo="' + i + '"><option value="">Ignorar</option>' + opciones.map(function(k){ return '<option value="' + k + '"' + (a.tipo === k ? ' selected' : '') + '>' + TIPO_LABEL[k] + '</option>'; }).join('') + '</select>';
+      var filas = a.ant ? a.ant.filas + ' en resumen' : fmt(a.rows.length);
+      t += '<tr><td class="fn" title="' + esc(a.name) + '">' + esc(a.name) + '</td><td>' + sel + '</td><td class="n">' + filas + '</td><td>' +
+        (a.error ? '<span class="tag bad">' + esc(a.error) + '</span>' : '<span class="tag">' + (a.ant ? 'Comparación' : 'OK') + '</span>') + '</td><td><button class="link" data-del="' + i + '">Quitar</button></td></tr>';
+    });
+    t += '</tbody></table>';
+    $('files').innerHTML = t;
+  }
+
+  // Ajustes
+  $('nomAlianzaTxt').textContent = C.NOVASOFT_NOMBRE;
+  $('ajNomCount').textContent = cfg.novasoft.length + ' clientes';
+  $('chipsNova').innerHTML = cfg.novasoft.map(function(n, i){ return '<span class="chip">' + esc(n) + '<button aria-label="Quitar" data-qn="' + i + '">×</button></span>'; }).join('');
+  $('chipsDir').innerHTML = cfg.directos.map(function(n, i){ return '<span class="chip">' + esc(n) + '<button aria-label="Quitar" data-qd="' + i + '">×</button></span>'; }).join('');
+  if (document.activeElement !== $('umbral')) $('umbral').value = cfg.umbral;
+  if (document.activeElement !== $('minimo')) $('minimo').value = cfg.minimo;
+  $('ajSegTxt').textContent = 'baja de ' + cfg.umbral + '% o más';
+}
+
+/* ---------- Eventos ---------- */
+var deb;
+document.addEventListener('input', function(e){
+  var el = e.target;
+  if (el.id === 'umbral' || el.id === 'minimo') {
+    var v = parseFloat(el.value); if (isNaN(v) || v < 0) return;
+    cfg[el.id] = v; guardarCfg(); clearTimeout(deb); deb = setTimeout(recalcular, 400);
+  }
+});
+document.addEventListener('change', function(e){
+  var el = e.target;
+  if (el.dataset.tipo != null) {
+    var a = archivos[+el.dataset.tipo]; a.tipo = el.value || null; a.error = null;
+    if (a.tipo && a.tipo.indexOf('ANT_') === 0) {
+      if (!a.ant) { if (a.bytes) leerAnteriorDe(a, a.tipo.slice(4)); else a.error = 'Vuelve a cargar este archivo para leerlo como consolidado.'; }
+    } else if (a.tipo) { validarColumnas(a, C.TIPOS.filter(function(x){ return x.id === a.tipo; })[0]); }
+    recalcular();
+  }
+});
+document.addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  var d = b.dataset;
+  if (d.dl) descargar([d.dl]);
+  else if (b.id === 'dlAll') descargar(SERV.map(function(s){ return s.id; }).filter(function(id){ return resultados[id]; }));
+  else if (d.del != null) { archivos.splice(+d.del, 1); recalcular(); }
+  else if (d.nova != null) agregar('novasoft', d.nova);
+  else if (d.dir != null) agregar('directos', d.dir);
+  else if (d.qn != null) { cfg.novasoft.splice(+d.qn, 1); guardarCfg(); recalcular(); }
+  else if (d.qd != null) { cfg.directos.splice(+d.qd, 1); guardarCfg(); recalcular(); }
+  else if (b.id === 'btnAddNova') { agregar('novasoft', $('addNova').value); $('addNova').value = ''; }
+  else if (b.id === 'btnAddDir') { agregar('directos', $('addDir').value); $('addDir').value = ''; }
+  else if (b.id === 'resetListas') { cfg.novasoft = C.NOVASOFT_DEFAULT.slice(); cfg.directos = C.DIRECTOS_DEFAULT.slice(); guardarCfg(); recalcular(); }
+});
+function agregar(lista, nombre){
+  nombre = (nombre || '').trim(); if (!nombre) return;
+  var otra = lista === 'novasoft' ? 'directos' : 'novasoft';
+  cfg[otra] = cfg[otra].filter(function(n){ return C.norm(n) !== C.norm(nombre); });
+  if (!cfg[lista].some(function(n){ return C.norm(n) === C.norm(nombre); })) cfg[lista].push(nombre);
+  guardarCfg(); recalcular();
+}
+
+/* ---------- Descarga ---------- */
+async function descargar(ids){
+  var opts = {umbral: cfg.umbral, minimo: cfg.minimo};
+  for (var i = 0; i < ids.length; i++) {
+    var s = SERV.filter(function(x){ return x.id === ids[i]; })[0], r = resultados[s.id];
+    if (!r) continue;
+    $('prog').textContent = 'Preparando ' + s.nombre + '…'; await tick();
+    var cmp = comparaciones[s.id] || null;
+    var wb = s.id === 'REC' ? C.libroRecepcion(XLSX, r, C.MESES[+$('mes').value - 1], cmp, opts)
+           : s.id === 'NOM' ? C.libroNomina(XLSX, r, cmp, opts) : C.libroSimple(XLSX, r, cmp, opts);
+    var out = XLSX.write(wb, {bookType:'xlsx', type:'array', compression:true});
+    var blob = new Blob([out], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    var nombre = s.archivo + ' ' + periodoTxt() + '.xlsx';
+    $('prog').textContent = 'Guardando ' + nombre + '…';
+    if (!(await guardar(nombre, blob))) return;
+  }
+  $('prog').textContent = ids.length > 1 ? 'Listo, se generaron los ' + ids.length + ' Excel.' : 'Listo.';
+}
+async function guardar(nombre, blob){
+  if (dl) {
+    try { await dl.save({filename: nombre, data: blob}); return true; }
+    catch (e) {
+      var c = e && e.code;
+      if (c === 'declined') { $('prog').textContent = 'Descarga cancelada.'; return false; }
+      if (c === 'rate_limited') { await new Promise(function(r){ setTimeout(r, 1500); }); return guardar(nombre, blob); }
+      if (['unavailable','not_granted','capability_disabled','capability_removed'].indexOf(c) < 0) { $('prog').textContent = 'No se pudo guardar ' + nombre + ': ' + (e && e.message || c); return false; }
+    }
+  }
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nombre; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  return true;
+}
+
+render();
+})();
+
+</script>
+</body>
+</html>
